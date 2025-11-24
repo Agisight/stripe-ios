@@ -88,8 +88,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsFromConfig() async {
         let config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD")) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD")) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         let intent = Intent.deferredIntent(intentConfig: intentConfig)
@@ -120,8 +121,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsPaymentMethodOptionsSetupFutureUsage() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.link: .offSession]))) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.link: .offSession]))) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         let intent = Intent.deferredIntent(intentConfig: intentConfig)
@@ -152,7 +154,8 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsPaymentMethodOptionsSetupFutureUsage_passthrough() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.card: .offSession]))) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.card: .offSession]))) { _, _ in
+            return ""
             // Nothing
         }
         config.apiClient.publishableKey = "pk_123"
@@ -184,8 +187,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsTopLevelSFUPaymentMethodOptionsSetupFutureUsageNone() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", setupFutureUsage: .offSession, paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.link: .none]))) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", setupFutureUsage: .offSession, paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.link: .none]))) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         let intent = Intent.deferredIntent(intentConfig: intentConfig)
@@ -216,8 +220,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsTopLevelSFUPaymentMethodOptionsSetupFutureUsageNone_passthrough() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", setupFutureUsage: .offSession, paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.card: .none]))) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "USD", setupFutureUsage: .offSession, paymentMethodOptions: PaymentSheet.IntentConfiguration.Mode.PaymentMethodOptions(setupFutureUsageValues: [.card: .none]))) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         let intent = Intent.deferredIntent(intentConfig: intentConfig)
@@ -248,8 +253,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsWithCBC() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         config.defaultBillingDetails.address.country = "FR"
@@ -285,8 +291,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsWithCardFundingSource() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         config.defaultBillingDetails.address.country = "FR"
@@ -320,8 +327,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testURLParamsWithCardAndBankFundingSources() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         config.defaultBillingDetails.address.country = "FR"
@@ -355,8 +363,9 @@ class LinkURLGeneratorTests: XCTestCase {
 
     func testIgnoresApplePrivateRelayEmails() {
         var config = PaymentSheet.Configuration()
-        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _, _ in
+        let intentConfig = PaymentSheet.IntentConfiguration(mode: .payment(amount: 100, currency: "EUR")) { _, _ in
             // Nothing
+            return ""
         }
         config.apiClient.publishableKey = "pk_123"
         config.defaultBillingDetails.email = "hide_my_email@privaterelay.appleid.com"
@@ -374,6 +383,7 @@ extension STPElementsSession {
         let apiResponse: [String: Any] = ["payment_method_preference": ["ordered_payment_method_types": ["123"],
                                                                         "country_code": "US", ] as [String: Any],
                                           "session_id": "123",
+                                          "config_id": "123",
                                           "apple_pay_preference": "enabled",
         ]
         return STPElementsSession.decodedObject(fromAPIResponse: apiResponse)!
@@ -385,6 +395,7 @@ extension STPElementsSession {
                                           "flags": ["cbc_in_link_popup": true,
                                                     "disable_cbc_in_link_popup": false, ] as [String: Bool],
                                           "session_id": "123",
+                                          "config_id": "123",
                                           "card_brand_choice": ["eligible": true,
                                                                 "preferred_networks": ["cartes_bancaires"],
                                                                 "supported_cobranded_networks": ["cartes_bancaires": true],
@@ -398,6 +409,7 @@ extension STPElementsSession {
         let apiResponse: [String: Any] = ["payment_method_preference": ["ordered_payment_method_types": ["123"],
                                                                         "country_code": "US", ] as [String: Any],
                                           "session_id": "123",
+                                          "config_id": "123",
                                           "apple_pay_preference": "enabled",
                                           "link_settings": ["link_funding_sources": ["CARD"],
                                                             "link_passthrough_mode_enabled": false,
@@ -414,6 +426,7 @@ extension STPElementsSession {
                 "country_code": "US",
             ],
             "session_id": "123",
+            "config_id": "123",
             "apple_pay_preference": "enabled",
             "link_settings": [
                 "link_funding_sources": ["CARD"],
@@ -450,6 +463,7 @@ extension STPElementsSession {
         let apiResponse: [String: Any] = ["payment_method_preference": ["ordered_payment_method_types": ["123"],
                                                                         "country_code": "US", ] as [String: Any],
                                           "session_id": "123",
+                                          "config_id": "123",
                                           "apple_pay_preference": "enabled",
                                           "link_settings": ["link_funding_sources": ["CARD"],
                                                             "link_passthrough_mode_enabled": true,
@@ -462,6 +476,7 @@ extension STPElementsSession {
         let apiResponse: [String: Any] = ["payment_method_preference": ["ordered_payment_method_types": ["123"],
                                                                         "country_code": "US", ] as [String: Any],
                                           "session_id": "123",
+                                          "config_id": "123",
                                           "apple_pay_preference": "enabled",
                                           "link_settings": ["link_funding_sources": ["BANK_ACCOUNT",
                                                                                      "CARD",

@@ -8,17 +8,19 @@
 import Foundation
 
 extension APIClient {
+    @discardableResult
     func signUp(email: String, password: String, livemode: Bool) async throws -> SignUpResponse {
         let signUpRequest = SignUpRequest(email: email, password: password, livemode: livemode)
         let response: SignUpResponse = try await request("v1/auth/signup", method: .POST, body: signUpRequest)
-        setAuthToken(response.token)
+        setAuthToken(response.token, email: response.user.email)
         return response
     }
 
+    @discardableResult
     func logIn(email: String, password: String, livemode: Bool) async throws -> LogInResponse {
         let logInRequest = LogInRequest(email: email, password: password, livemode: livemode)
         let response: LogInResponse = try await request("v1/auth/login", method: .POST, body: logInRequest)
-        setAuthToken(response.token)
+        setAuthToken(response.token, email: response.user.email)
         return response
     }
 
@@ -35,6 +37,7 @@ extension APIClient {
         return response
     }
 
+    @discardableResult
     func saveUser(cryptoCustomerId: String) async throws -> SaveUserResponse {
         guard let token = authTokenWithLAI else { throw APIError.missingAuthTokenWithLAI }
         let saveUserRequest = SaveUserRequest(cryptoCustomerId: cryptoCustomerId)

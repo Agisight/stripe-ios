@@ -57,10 +57,6 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
         case deferred_mc
         /// Def MP: Deferred multiprocessor flow
         case deferred_mp
-        /// Def CSC CT: Deferred client side confirmation with confirmation tokens
-        case deferred_csc_ct
-        /// Def SSC CT: Deferred server side confirmation with confirmation tokens
-        case deferred_ssc_ct
 
         var displayName: String {
             switch self {
@@ -74,12 +70,15 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
                 return "Deferred server side confirmation with manual confirmation"
             case .deferred_mp:
                 return "Deferred multiprocessor flow"
-            case .deferred_csc_ct:
-                return "Deferred client side confirmation with CTs"
-            case .deferred_ssc_ct:
-                return "Deferred server side confirmation with CTs"
             }
         }
+    }
+
+    enum ConfirmationMode: String, PickerEnum {
+        static var enumName: String { "Confirmation mode" }
+
+        case confirmationToken = "ConfirmationToken"
+        case paymentMethod = "PaymentMethod"
     }
 
     enum CustomerMode: String, PickerEnum {
@@ -140,7 +139,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
     }
 
     enum MerchantCountry: String, PickerEnum {
-        static var enumName: String { "MerchantCountry" }
+        static var enumName: String { "Merchant" }
 
         case US
         case GB
@@ -155,6 +154,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
         case TH
         case DE
         case IT
+        case stripeShop = "stripe_shop_test"
     }
 
     enum APMSEnabled: String, PickerEnum {
@@ -310,6 +310,13 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
 
     enum EnablePassiveCaptcha: String, PickerEnum {
         static var enumName: String { "Enable passive captcha" }
+
+        case on
+        case off
+    }
+
+    enum EnableAttestationOnConfirmation: String, PickerEnum {
+        static var enumName: String { "Enable attestation on confirmation" }
 
         case on
         case off
@@ -669,6 +676,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
     var style: ConfigurationStyle
     var customerKeyType: CustomerKeyType
     var integrationType: IntegrationType
+    var confirmationMode: ConfirmationMode
     var customerMode: CustomerMode
     var currency: Currency
     var amount: Amount
@@ -682,6 +690,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
     var applePayButtonType: ApplePayButtonType
     var allowsDelayedPMs: AllowsDelayedPMs
     var enablePassiveCaptcha: EnablePassiveCaptcha
+    var enableAttestationOnConfirmation: EnableAttestationOnConfirmation
     var paymentMethodSave: PaymentMethodSave
     var allowRedisplayOverride: AllowRedisplayOverride
     var paymentMethodRemove: PaymentMethodRemove
@@ -729,6 +738,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
             style: .automatic,
             customerKeyType: .customerSession,
             integrationType: .normal,
+            confirmationMode: .confirmationToken,
             customerMode: .guest,
             currency: .usd,
             amount: ._5099,
@@ -740,6 +750,7 @@ struct PaymentSheetTestPlaygroundSettings: Codable, Equatable {
             applePayButtonType: .buy,
             allowsDelayedPMs: .on,
             enablePassiveCaptcha: .on,
+            enableAttestationOnConfirmation: .on,
             paymentMethodSave: .enabled,
             allowRedisplayOverride: .notSet,
             paymentMethodRemove: .enabled,
